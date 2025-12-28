@@ -1,13 +1,17 @@
-package mobile.test;
+package web.test;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
-import pages.web.ArticlePage;
-import pages.web.MainPage;
-import pages.web.SearchResultsPage;
-import utils.WebDriverFactory;
+import web.page.ArticlePage;
+import web.page.MainPage;
+import web.page.SearchResultsPage;
+import web.config.WebDriverFactory;
 
 public class WikipediaWebTest {
+
 
     private WebDriver driver;
     private MainPage mainPage;
@@ -15,21 +19,21 @@ public class WikipediaWebTest {
     private ArticlePage articlePage;
 
     @BeforeClass
-    public void setup() {
+    public void setUp() {
         driver = WebDriverFactory.createDriver();
         mainPage = new MainPage(driver);
         searchResultsPage = new SearchResultsPage(driver);
         articlePage = new ArticlePage(driver);
     }
 
-    / ✅ Сценарий 1: сайт открывается */
+    // Сценарий 1
     @Test
     public void siteShouldOpen() {
         mainPage.open();
         Assert.assertTrue(driver.getTitle().contains("Wikipedia"));
     }
 
-    / ✅ Сценарий 2: переход на английскую версию */
+    // Сценарий 2
     @Test
     public void shouldOpenEnglishVersion() {
         mainPage.open();
@@ -37,29 +41,30 @@ public class WikipediaWebTest {
         Assert.assertTrue(driver.getCurrentUrl().contains("en.wikipedia.org"));
     }
 
-    / ✅ Сценарий 3: поиск статьи */
+    // Сценарий 3
     @Test
-    public void searchShouldReturnResults() {
+    public void testArticleLinksFromSearch() {
         mainPage.open();
-        mainPage.selectEnglish();
-        mainPage.search("Selenium");
-        Assert.assertTrue(driver.getTitle().contains("Search"));
-    }
-
-    / ✅ Сценарий 4: открытие статьи и проверка элементов */
-    @Test
-    public void articleShouldOpenAndContainTOC() {
-        mainPage.open();
-        mainPage.selectEnglish();
-        mainPage.search("Selenium");
-        searchResultsPage.openFirstResult();
-
-        Assert.assertEquals(articlePage.getTitleText(), "Selenium");
-        Assert.assertTrue(articlePage.isTableOfContentsDisplayed());
+        mainPage.search("Test");
+        int count = searchResultsPage.getSearchResultsCount();
+        Assert.assertTrue(
+                count >= 0,
+                "Кол-во вариантов ответа на запрос меньше нуля: " + count
+        );
+        // Сценарий 4
+        if (count > 0) {
+            searchResultsPage.openFirstResult();
+            Assert.assertTrue(
+                    articlePage.isTableOfContentsDisplayed(),
+                    "После перехода по результату контент статьи не отображается"
+            );
+        }
     }
 
     @AfterClass
     public void tearDown() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

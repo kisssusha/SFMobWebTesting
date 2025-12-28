@@ -1,24 +1,34 @@
-package mobile.page;
+package web.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class ArticlePage {
 
-    private WebDriver driver;
 
-    private By title = By.id("firstHeading");
-    private By tableOfContents = By.id("toc");
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+
+    @FindBy(id = "firstHeading")
+    private WebElement title;
+
+    @FindBy(id = "toc")
+    private WebElement tableOfContents;
 
     public ArticlePage(WebDriver driver) {
         this.driver = driver;
-    }
-
-    public String getTitleText() {
-        return driver.findElement(title).getText();
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public boolean isTableOfContentsDisplayed() {
-        return driver.findElement(tableOfContents).isDisplayed();
+        wait.until(ExpectedConditions.visibilityOf(tableOfContents));
+        return tableOfContents.isDisplayed();
     }
 }

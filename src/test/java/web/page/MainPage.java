@@ -1,18 +1,22 @@
-package mobile.page;
+package web.page;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class MainPage {
 
-    private WebDriver driver;
-
-    private By searchInput = By.id("searchInput");
-    private By searchButton = By.xpath("//button[@type='submit']");
-    private By englishLink = By.id("js-link-box-en");
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
     public MainPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void open() {
@@ -20,11 +24,13 @@ public class MainPage {
     }
 
     public void selectEnglish() {
-        driver.findElement(englishLink).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("js-link-box-en"))).click();
     }
 
     public void search(String text) {
-        driver.findElement(searchInput).sendKeys(text);
-        driver.findElement(searchButton).click();
+        WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("searchInput")));
+        input.clear();
+        input.sendKeys(text);
+        input.sendKeys(Keys.ENTER);
     }
 }

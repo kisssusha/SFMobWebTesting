@@ -10,11 +10,13 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.16.1")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.6.3")
+    testImplementation("io.appium:java-client:9.0.0")
+    testImplementation("org.testng:testng:7.9.0")
+    testImplementation("org.slf4j:slf4j-simple:2.0.12")
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useTestNG()
 }
